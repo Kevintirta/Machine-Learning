@@ -44,7 +44,7 @@ data.fillna(data.mean(),inplace=True)
 print(data.isnull().sum())
 print(data.tail(20))
 
-# Iterate over each column of cc_apps
+# Iterate over each column of data
 for col in data:
     # Check if the column is of object type
     if data[col].dtypes == 'object':
@@ -73,7 +73,7 @@ data = data.values
 X,y = data[:,0:12] , data[:,13]
 
 # Split into train and test sets
-X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.20,random_state=42)
+X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.25,random_state=42)
 
 # Instantiate MinMaxScaler and use it to rescale X_train and X_test to value from 0 to 1
 scaler = MinMaxScaler(feature_range=(0, 1))
