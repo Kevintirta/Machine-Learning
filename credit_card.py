@@ -44,11 +44,9 @@ data.fillna(data.mean(),inplace=True)
 print(data.isnull().sum())
 print(data.tail(20))
 
-# Iterate over each column of data
+# Iterate over each column of data and check the data types of the column, if the data type is object with NAN value, then it will be filled with the most frequent value
 for col in data:
-    # Check if the column is of object type
     if data[col].dtypes == 'object':
-        # Impute with the most frequent value
         data = data.fillna(data[col].value_counts().index[0])
 
 # Count the number of NaNs in the dataset and print the counts to verify
