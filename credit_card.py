@@ -1,82 +1,81 @@
-# Import pandas
+# Import pandas & sklearn library
 import pandas as pd
 import numpy as np
-from sklearn.preprocessing import LabelEncoder
-from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import MinMaxScaler
-from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import confusion_matrix
 from sklearn.metrics import accuracy_score
 from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import LabelEncoder
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.linear_model import LogisticRegression
+
 
 # Load dataset
-cc_apps = pd.read_csv("cc_approvals.data.csv",header=None)
+data = pd.read_csv("cc_approvals.data.csv",header=None)
 
 # Inspect data
-cc_apps.head()
+data.head()
 
-# Print summary statistics
-cc_apps_description = cc_apps.describe()
-print(cc_apps_description)
+# To get summary information(Mean, standard deviation, max value, 25th, 50th, and 75th percentiles, and etc) 
+data_description = data.describe()
+print(data_description)
 
 print("\n")
 
-# Print Data information
-cc_apps_info = cc_apps.info()
-print(cc_apps_info)
+# To get the data information
+data_info = data.info()
+print(data_info)
 
 print("\n")
 
 # Inspect the missing values
-cc_apps.tail(20)
+data.tail(20)
 
 # Replace the ? with NaN
-cc_apps = cc_apps.replace('?',np.NaN)
+data = data.replace('?',np.NaN)
 
 # Inspect the missing values again
-cc_apps.tail(20)
+data.tail(20)
 
 # Impute the missing values with mean imputation
-
-cc_apps.fillna(cc_apps.mean(),inplace=True)
+data.fillna(data.mean(),inplace=True)
 
 # Count the number of NaNs in the dataset to verify
-
-print(cc_apps.isnull().sum())
-print(cc_apps.tail(20))
+print(data.isnull().sum())
+print(data.tail(20))
 
 # Iterate over each column of cc_apps
-for col in cc_apps:
+for col in data:
     # Check if the column is of object type
-    if cc_apps[col].dtypes == 'object':
+    if data[col].dtypes == 'object':
         # Impute with the most frequent value
-        cc_apps = cc_apps.fillna(cc_apps[col].value_counts().index[0])
+        data = data.fillna(data[col].value_counts().index[0])
+
 # Count the number of NaNs in the dataset and print the counts to verify
-print(cc_apps.tail(20))
-cc_apps.isnull().sum()
+print(data.tail(20))
+data.isnull().sum()
 
 # Instantiate LabelEncoder
 le = LabelEncoder()
 
-# Iterate over all the values of each column and extract their dtypes
-for col in cc_apps:
-    # Compare if the dtype is object
-    if cc_apps[col].dtypes == 'object':
-        # Use LabelEncoder to do the numeric transformation
-        cc_apps[col] = le.fit_transform(cc_apps[col])
+# Iterate over all the values of each column and check if the data type is object type or not. If the data type is object type, the value will be replace with numerical representation
+for col in data:
+    if data[col].dtypes == 'object':
+        data[col] = le.fit_transform(data[col])
 
-#Drop the features 11 and 13 and convert the DataFrame to a NumPy array
-cc_apps = cc_apps.drop([11, 13], axis=1)
-# print(cc_apps)
-cc_apps = cc_apps.values
+#Drop the features 11 and 13 and convert the dataframe to numpy for processing purposes
+data = data.drop([11, 13], axis=1)
+
+# to get data values
+data = data.values
 
 # Segregate features and labels into separate variables
-X,y = cc_apps[:,0:12] , cc_apps[:,13]
+X,y = data[:,0:12] , data[:,13]
 
 # Split into train and test sets
 X_train, X_test, y_train, y_test = train_test_split(X,y,test_size=0.20,random_state=42)
 
-# Instantiate MinMaxScaler and use it to rescale X_train and X_test
+# Instantiate MinMaxScaler and use it to rescale X_train and X_test to value from 0 to 1
 scaler = MinMaxScaler(feature_range=(0, 1))
 rescaledX_train = scaler.fit_transform(X_train)
 rescaledX_test = scaler.fit_transform(X_test)
